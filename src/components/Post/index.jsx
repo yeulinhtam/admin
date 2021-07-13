@@ -19,10 +19,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Moment from 'react-moment';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { PublishButton } from '../Utils/AlertButton';
 
 const theme = createMuiTheme({
     palette: {
@@ -36,63 +37,8 @@ const theme = createMuiTheme({
 });
 
 
-function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-}
-
-function randomDate(start, end, startHour, endHour) {
-    var date = new Date(+start + Math.random() * (end - start));
-    var hour = startHour + Math.random() * (endHour - startHour) | 0;
-    date.setHours(hour);
-    return date.toDateString();
-}
-
-
-const statusStyles = makeStyles((theme) => ({
-    root: {
-        height: 22,
-        minWidth: 22,
-        lineHeight: 0,
-        borderRadius: 8,
-        cursor: 'default',
-        alignItems: 'center',
-        whiteSpace: 'nowrap',
-        display: 'inline-flex',
-        justifyContent: 'center',
-        padding: '0px 8px',
-        color: 'rgb(183, 33, 54)',
-        fontSize: '0.75rem',
-        fontFamily: "Public Sans, sans-serif",
-        highlight:  theme.palette.type === 'light'
-        ? {
-            color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
-        : {
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
-        },
-        fontWeight: 700
-    },
-}));
-
-
-
-const rows = [
-    createData('Introducing JSX', 'React JS', randomDate(1,100,1,23), 'Block', 4.3),
-    createData('Rendering Elements', 'React JS', randomDate(1,100,1,23), 'Open', 4.9),
-    createData('Components and Props', 'React JS', randomDate(1,100,1,23), 'Pending', 6.0),
-    createData('State and Lifecycle', 'Node JS', randomDate(1,100,1,23), 'Block', 4.0),
-    createData('Handling Events', 'Javascript', randomDate(1,100,1,23), 'Pending', 3.9),
-    createData('Conditional Rendering', 'React JS', randomDate(1,100,1,23), 'Open', 6.5),
-    createData('Lists and Keys', 'Angular', randomDate(1,100,1,23), 'Open', 4.3),
-    createData('Forms', 'React JS', randomDate(1,100,1,23), 'Open', 0.0),
-    createData('Lifting State Up', 'React JS', randomDate(1,100,1,23), 'Open', 7.0),
-    createData('Composition vs Inheritance', 'React JS', randomDate(1,100,1,23), 'Open', 0.0),
-    createData('Higher-Order Components', 'React Native',randomDate(1,100,1,23), 'Open', 2.0),
-];
-
 function descendingComparator(a, b, orderBy) {
+    
     if (b[orderBy] < a[orderBy]) {
         return -1;
     }
@@ -118,32 +64,19 @@ function stableSort(array, comparator) {
     return stabilizedThis.map((el) => el[0]);
 }
 
+
 const headCells = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Post' },
-    { id: 'calories', numeric: true, disablePadding: false, label: 'Category' },
-    { id: 'fat', numeric: true, disablePadding: false, label: 'Create at' },
-    { id: 'carbs', numeric: true, disablePadding: false, label: 'Status' },
-    { id: 'protein', numeric: true, disablePadding: false, label: '' },
+    { id: 'title', numeric: true, disablePadding: false, label: 'Post' },
+    { id: 'category', numeric: false, disablePadding: false, label: 'Category' },
+    { id: 'createdAt', numeric: true, disablePadding: false, label: 'Create at' },
+    { id: 'publish', numeric: true, disablePadding: false, label: 'Publish' },
 ];
 
-function LabelStatus(props){
-    const {title } = props;
-   
-    const classes = statusStyles();
-
-    return (
-        <span className={clsx(classes.root, {
-            [classes.highlight]: 4 > 0,
-        })}>
-            {title}
-        </span>
-    )
-}
 
 function EnhancedTableHead(props) {
    
     const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
-   
+
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -222,7 +155,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
     const classes = useToolbarStyles();
-    const { numSelected } = props;
+    const { numSelected, data } = props;
 
     return (
 
@@ -295,13 +228,15 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props) {
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
+    const [orderBy, setOrderBy] = React.useState('name');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const { data } = props;
+
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -310,8 +245,9 @@ export default function EnhancedTable() {
     };
 
     const handleSelectAllClick = (event) => {
+
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.name);
+            const newSelecteds = data.map((n) => n.title);
             setSelected(newSelecteds);
             return;
         }
@@ -321,7 +257,7 @@ export default function EnhancedTable() {
     const handleClick = (event, name) => {
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];
-
+     
         if (selectedIndex === -1) {
             newSelected = newSelected.concat(selected, name);
         } else if (selectedIndex === 0) {
@@ -351,13 +287,13 @@ export default function EnhancedTable() {
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
         <div className={classes.root}>
             <ThemeProvider theme={theme}>
                 <Paper className={classes.paper}>
-                    <EnhancedTableToolbar numSelected={selected.length} />
+                    <EnhancedTableToolbar numSelected={selected.length} data={data} />
                     <TableContainer>
                         <Table
                             className={classes.table}
@@ -372,13 +308,13 @@ export default function EnhancedTable() {
                                 orderBy={orderBy}
                                 onSelectAllClick={handleSelectAllClick}
                                 onRequestSort={handleRequestSort}
-                                rowCount={rows.length}
+                                rowCount={data.length}
                             />
                             <TableBody>
-                                {stableSort(rows, getComparator(order, orderBy))
+                                {stableSort(data, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                        const isItemSelected = isSelected(row.name);
+                                        const isItemSelected = isSelected(row.title);
                                         const labelId = `enhanced-table-checkbox-${index}`;
 
                                         return (
@@ -386,28 +322,27 @@ export default function EnhancedTable() {
                                                 hover
                                                 aria-checked={isItemSelected}
                                                 tabIndex={-1}
-                                                key={row.name}
+                                                key={row._id}
                                                 selected={isItemSelected}
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
-                                                         onClick={(event) => handleClick(event, row.name)}
+                                                        onClick={(event) => handleClick(event, row.title)}
                                                         checked={isItemSelected}
                                                         inputProps={{ 'aria-labelledby': labelId }}
                                                     />
                                                 </TableCell>
                                                 <TableCell component="th" id={labelId} scope="row" padding="default">
-                                                    {row.name}
+                                                    {row.title}
                                                 </TableCell>
-                                                <TableCell align="left">{row.calories}</TableCell>
-                                                <TableCell align="left">{row.fat}</TableCell>
+                                                <TableCell align="left">{row.category.name}</TableCell>
                                                 <TableCell align="left">
-                                                    <LabelStatus title={row.carbs} color="red"/>
+                                                    <Moment format="YYYY/MM/DD">{row.createdAt}</Moment>
                                                 </TableCell>
                                                 <TableCell align="left">
-                                                    <IconButton>
-                                                        <MoreVertIcon />
-                                                    </IconButton>
+                                                    <PublishButton 
+                                                        label={row.publish ? "Publish" : "Hide" }
+                                                        color={row.publish ? "green" : "red" }/>
                                                 </TableCell>
                                             </TableRow>
                                         );
@@ -423,7 +358,7 @@ export default function EnhancedTable() {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={rows.length}
+                        count={data.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onChangePage={handleChangePage}

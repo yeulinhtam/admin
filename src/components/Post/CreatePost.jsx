@@ -100,6 +100,7 @@ function CreatePost(props) {
             data.append('title',values.title);
             data.append('description',values.description);
             data.append('body',values.body);
+            data.append('category',values.category);
             data.append('author',"60d83f03047d2d351cdc9109");
             data.append('publish',values.publish);
             data.append('enableComments',values.enableComments);

@@ -9,7 +9,7 @@ const postApi = {
 
     getPosts: () => {
         const url = `/posts/`;
-        return axiosClient.get()
+        return axiosClient.get(url)
     }
 }
 

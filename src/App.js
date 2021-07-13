@@ -45,22 +45,22 @@ function App() {
 
   return (
     <Grid container className={classes.container}>
-      <Grid item lg={2}>
-        <Menu />
-      </Grid>
-      <Grid item lg={10}>
-        <Grid container direction="column"
-          justify="flex-start"
-          alignItems="stretch">
-          <Grid item lg={12}>
-            <PrimarySearchAppBar />
-          </Grid>
-          <Grid item lg={12} container style={{ background: 'white', marginTop: 10 }}>
+      <Router>
+        <Grid item lg={2}>
+          <Menu />
+        </Grid>
+        <Grid item lg={10}>
+          <Grid container direction="column"
+            justify="flex-start"
+            alignItems="stretch">
             <Grid item lg={12}>
-              <Breadcumb links={links} />
+              <PrimarySearchAppBar />
             </Grid>
-            <Grid item lg={12}>
-              <Router>
+            <Grid item lg={12} container style={{ background: 'white', marginTop: 10 }}>
+              <Grid item lg={12}>
+                <Breadcumb links={links} />
+              </Grid>
+              <Grid item lg={12}>
                 <Switch>
                   <Route path="/" exact component={HomeContainer} />
                   <Route path="/post/" exact component={PostContainer} />
@@ -68,11 +68,11 @@ function App() {
                   <Route path="/category" exact component={CategoryContainer} />
                   <Route path="/category/create" exact component={CategoryCreateContainer} />
                 </Switch>
-              </Router>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </Router>
     </Grid>
   );
 }
