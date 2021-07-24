@@ -6,12 +6,11 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import HomeIcon from '@material-ui/icons/Home';
 import PaymentIcon from '@material-ui/icons/Payment';
 import GroupIcon from '@material-ui/icons/Group';
+import FolderIcon from '@material-ui/icons/Folder';
+import BookIcon from '@material-ui/icons/Book';
+import { Link } from 'react-router-dom';
 import React from 'react';
 
-
-Menu.propTypes = {
-
-};
 
 
 const useStyles = makeStyles((theme) => ({
@@ -87,6 +86,18 @@ function Menu(props) {
                             <GroupIcon />
                         </ListItemIcon>
                         <ListItemText primary="Users" className={classes.textMenu} />
+                    </ListItem>
+                    <ListItem button className={classes.menuItem} component={Link} to="/post">
+                        <ListItemIcon className={classes.iconMenu}>
+                            <BookIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Post" className={classes.textMenu} />
+                    </ListItem>
+                    <ListItem button className={classes.menuItem} component={Link} to="/category">
+                        <ListItemIcon className={classes.iconMenu}>
+                            <FolderIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Category" className={classes.textMenu} />
                     </ListItem>
                 </List>
             </Grid>

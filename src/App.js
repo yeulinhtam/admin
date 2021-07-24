@@ -1,6 +1,8 @@
 import { Grid } from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { fade, makeStyles } from '@material-ui/core/styles';
+import MomentUtils from '@date-io/moment';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import Menu from './components/Menu';
 import PrimarySearchAppBar from './components/Header';
 import Breadcumb from './components/Breadcumb';
@@ -9,7 +11,14 @@ import PostContainer from './containers/PostContainer';
 import PostCreateContainer from './containers/PostCreateContainer';
 import CategoryContainer from './containers/CategoryContainer';
 import CategoryCreateContainer from './containers/CategoryCreateContainer';
+import MoneyContainer from './containers/MoneyContainer';
 
+
+
+import CalendarContainer from './containers/CalendarContainer';
+import LoginContainer from './containers/LoginContainer';
+import RegisterContainer from './containers/RegisterContainer';
+import { useEffect, useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -20,60 +29,57 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function App() {
+
   const classes = useStyles();
 
-  const links = [{
-    parent: true,
-    name: 'Home',
-    href: "/google"
-  },
-  {
-    parent: true,
-    name: 'Post',
-    href: "/google"
-  },
-  {
-    parent: true,
-    name: 'Detail',
-    href: "/google"
-  },
-  {
-    parent: false,
-    name: 'Post',
-    href: "/google"
-  }];
+  const [token, setToken] = useState('');
+
+
+
+
 
   return (
-    <Grid container className={classes.container}>
+    <>
       <Router>
-        <Grid item lg={2}>
-          <Menu />
-        </Grid>
-        <Grid item lg={10}>
-          <Grid container direction="column"
-            justify="flex-start"
-            alignItems="stretch">
-            <Grid item lg={12}>
-              <PrimarySearchAppBar />
+        <Switch>
+          <Route path="/login" exact component={LoginContainer} />
+          <Route path="/register" exact component={RegisterContainer} />
+          <Route path={["/", "/post", "/post/create", "/category", "/category/create"]}>
+            <Grid container className={classes.container}>
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <Grid item lg={2}>
+                  <Menu />
+                </Grid>
+                <Grid item lg={10}>
+                  <Grid container direction="column"
+                    justify="flex-start"
+                    alignItems="stretch">
+                    <Grid item lg={12}>
+                      <PrimarySearchAppBar />
+                    </Grid>
+                    <Grid item lg={12} container style={{ background: 'white', marginTop: 10 }}>
+                      <Grid item lg={12}>
+                        <Breadcumb />
+                      </Grid>
+                      <Switch>
+                        <Grid item lg={12}>
+                          <Route path="/" exact component={HomeContainer} />
+                          <Route path="/post/" exact component={PostContainer} />
+                          <Route path="/post/create" exact component={PostCreateContainer} />
+                          <Route path="/category" exact component={CategoryContainer} />
+                          <Route path="/category/create" exact component={CategoryCreateContainer} />
+                          <Route path="/money" exact component={MoneyContainer} />
+                        </Grid>
+                      </Switch>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </MuiPickersUtilsProvider>
             </Grid>
-            <Grid item lg={12} container style={{ background: 'white', marginTop: 10 }}>
-              <Grid item lg={12}>
-                <Breadcumb links={links} />
-              </Grid>
-              <Grid item lg={12}>
-                <Switch>
-                  <Route path="/" exact component={HomeContainer} />
-                  <Route path="/post/" exact component={PostContainer} />
-                  <Route path="/post/create" exact component={PostCreateContainer} />
-                  <Route path="/category" exact component={CategoryContainer} />
-                  <Route path="/category/create" exact component={CategoryCreateContainer} />
-                </Switch>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+          </Route>
+        </Switch>
       </Router>
-    </Grid>
+    </>
   );
 }
 
